@@ -5,7 +5,7 @@ let hub_host = 'registry-1.docker.io';
 // Docker认证服务器地址
 const auth_url = 'https://auth.docker.io';
 // 自定义的工作服务器地址
-let workers_url = 'https://xxx/';
+let workers_url = 'https://docker.gdzja.site/';
 
 let 屏蔽爬虫UA = ['netcraft'];
 
@@ -21,13 +21,13 @@ function routeByHosts(host) {
 		"ghcr": "ghcr.io",
 		"cloudsmith": "docker.cloudsmith.io",
 		"nvcr": "nvcr.io",
-		
+
 		// 测试环境
 		"test": "registry-1.docker.io",
 	};
 
-	if (host in routes) return [ routes[host], false ];
-	else return [ hub_host, true ];
+	if (host in routes) return [routes[host], false];
+	else return [hub_host, true];
 }
 
 /** @type {RequestInit} */
@@ -66,7 +66,7 @@ function newUrl(urlStr) {
 function isUUID(uuid) {
 	// 定义一个正则表达式来匹配 UUID 格式
 	const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-	
+
 	// 使用正则表达式测试 UUID 字符串
 	return uuidRegex.test(uuid);
 }
@@ -200,7 +200,7 @@ export default {
 		const pathname = url.pathname;
 
 		// 获取请求参数中的 ns
-		const ns = url.searchParams.get('ns'); 
+		const ns = url.searchParams.get('ns');
 		const hostname = url.searchParams.get('hubhost') || url.hostname;
 		const hostTop = hostname.split('.')[0]; // 获取主机名的第一部分
 
@@ -259,14 +259,14 @@ export default {
 						},
 					});
 				} else return fetch(new Request(env.URL, request));
-			} else if (url.pathname == '/'){
+			} else if (url.pathname == '/') {
 				return new Response(await searchInterface(), {
 					headers: {
-					  'Content-Type': 'text/html; charset=UTF-8',
+						'Content-Type': 'text/html; charset=UTF-8',
 					},
 				});
 			}
-			
+
 			const newUrl = new URL("https://registry.hub.docker.com" + pathname + url.search);
 
 			// 复制原始请求的标头
@@ -276,10 +276,10 @@ export default {
 			headers.set('Host', 'registry.hub.docker.com');
 
 			const newRequest = new Request(newUrl, {
-					method: request.method,
-					headers: headers,
-					body: request.method !== 'GET' && request.method !== 'HEAD' ? await request.blob() : null,
-					redirect: 'follow'
+				method: request.method,
+				headers: headers,
+				body: request.method !== 'GET' && request.method !== 'HEAD' ? await request.blob() : null,
+				redirect: 'follow'
 			});
 
 			return fetch(newRequest);
@@ -310,7 +310,7 @@ export default {
 		}
 
 		// 修改 /v2/ 请求路径
-		if ( hub_host == 'registry-1.docker.io' && /^\/v2\/[^/]+\/[^/]+\/[^/]+$/.test(url.pathname) && !/^\/v2\/library/.test(url.pathname)) {
+		if (hub_host == 'registry-1.docker.io' && /^\/v2\/[^/]+\/[^/]+\/[^/]+$/.test(url.pathname) && !/^\/v2\/library/.test(url.pathname)) {
 			//url.pathname = url.pathname.replace(/\/v2\//, '/v2/library/');
 			url.pathname = '/v2/library/' + url.pathname.split('/v2/')[1];
 			console.log(`modified_url: ${url.pathname}`);
